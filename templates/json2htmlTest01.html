@@ -1,0 +1,51 @@
+{% extends "MyBase.html" %}
+
+{% block title %}Page 1{% endblock title %}
+
+
+{% block content %}
+
+<div id="mydiv" class="container"  data-balises='{{ balButton01|tojson }}'>
+</div>
+
+
+     
+<div class="container" id="divForTags0"></div>
+
+
+
+
+
+
+
+  <hr>
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" language="javascript">
+
+function lireInfosFichiers(){
+  // Lors du 1er chargement de cette page 10 enregistrements de la table mySQL 'notrecode'
+  // ont été placés dans la <div id="mydiv"> 
+
+
+
+  var balises = JSON.parse(document.getElementById("mydiv").dataset.balises)
+  // var files = JSON.parse((document.getElementById("mydiv").dataset.datatodisplay).decode("utf-8"));  
+  
+  console.log("data dans fichier page1.html : ",balises)
+  var f = []
+  // Placer dans 'f' uniquement les clés souhaitées : 'dataKey_col_1', 'titre_colspan_4',
+  // 'fileName', 'id','dataTag_btnOpen'
+
+  for (var i = 0; i < balises.length; i++) {
+    f.push(balises[i])
+  }
+  return f
+}
+
+</script>
+
+
+{% endblock scripts %}

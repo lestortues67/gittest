@@ -1,0 +1,550 @@
+{% extends "MyBase.html" %}
+
+{% block title %}Page 1{% endblock title %}
+
+
+{% block content %}
+
+<div id="mydiv" class="container"  data-datatodisplay='{{ datatodisplay|tojson }}'>
+</div>
+
+   <div class="container" id="divSelect0">
+    
+      <select id = "selectLangage"></select>
+      <select id = "selectDossier"></select>
+      <select id = "selectSousdossier"></select>  
+    
+    <button class="btn btn-primary" id="btnCreer" >Créer</button>      
+   </div>
+
+
+
+     
+   <div class="container" id="divForTable0"></div>
+
+
+
+
+
+
+
+  <hr>
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script src="static/lib_table2023.js"></script>
+<script type="text/javascript" language="javascript">
+  var divSelect0 = document.getElementById('divSelect0')
+
+  var selectLangage = document.getElementById('selectLangage')
+  var selectDossier = document.getElementById('selectDossier')
+  var selectSousdossier = document.getElementById('selectSousdossier')
+
+  var btnCreer = document.getElementById("btnCreer")
+
+  HTMLSelectElement.prototype.addToClass = function(p_string){
+    this.classList.add(p_string)
+  }
+  HTMLSelectElement.prototype.removeFromClass = function(p_string){
+    this.classList.remove(p_string)
+  }
+  HTMLSelectElement.prototype.replaceFromClass = function(p_stringToReplace, p_string){
+    this.classList.replace(p_stringToReplace, p_string)
+  }
+  HTMLSelectElement.prototype.toggleFromClass = function(p_string){
+    this.classList.toggle(p_string)
+  }
+  HTMLSelectElement.prototype.clearOptions = function(){
+    while(this.lastChild.value>0){
+      console.log("this.firstChild.value : ",this.firstChild.value)
+      console.log("this.lastChild.value : ",this.lastChild.value)
+      console.log("this.firstChild.value>0 : ",this.firstChild.value>0)
+      // this.removeChild(this.firstChild)
+      this.removeChild(this.lastChild)
+    }
+  }
+  HTMLSelectElement.prototype.readOption = function(){
+    var arr = []
+    var id = this.id
+    var value = this.value
+    var text = this.selectedOptions[0].text
+    var d = {'id':id,'value':value,'texte':text}
+    arr.push(d)
+    return arr
+  }
+  HTMLSelectElement.prototype.datasForOptions = function(p_url, p_textKey, p_valueKey="id"){
+    // Utiliser l'url pour obtenir des datas pour créer & ajouter des <option>
+    // p_url englobe les données de paramètres/arguments de la requête GET, par exemple : 
+            // langage : p_url = "/langageAll"
+            // dossier : p_url = "/dossierWithParentId?langage=1"
+            // sousdossier : p_url = "/sousdossierWithParentId?dossier=2"
+
+    // p_textKey peut prendre 3 valeurs : langage, dossier ou sousdossier
+    // p_valueKey="id" convient pour les 3 cas 
+
+
+    //  à la table mySQL 'dossier' toutes ses lignes pour 
+    // parentId == p_parentId
+    // Pour en créer des <option>
+
+
+    // var arr = [];
+    // const getDatas = await fetch(p_url);
+    // const data = await getDatas.json();
+    // for (var i = 0; i < data.length; i++) {
+    //       var d  = {}
+    //       d['text'] = data[i][p_textKey]
+    //       d['value'] = data[i][p_valueKey]
+    //       arr.push(d)
+    //     }
+    // this.buildAllOptions(arr)
+
+    var arr = [];
+      fetch(p_url)
+      .then(response => response.json())
+      .then(data => {
+        console.log("Voici les datas pour SELECT : ",data)
+        // Utiliser les données ici
+        for (var i = 0; i < data.length; i++) {
+          var d  = {}
+          d['text'] = data[i][p_textKey]
+          d['value'] = data[i][p_valueKey]
+          d['parentId'] = data[i]['parentId']
+
+          arr.push(d)
+        }
+        this.buildAllOptions(arr)
+      })
+      .catch(error => {
+        // Gérez les erreurs ici
+        console.error('Une erreur s\'est produite :', error);
+      });    
+  };
+  
+  HTMLSelectElement.prototype.buildAllOptions = function(p_optionList){
+    // this.clearOptions()
+    for (var i = 0; i < p_optionList.length; i++) {
+      var o = document.createElement('option')
+      o.innerHTML = p_optionList[i].text
+      o.value = p_optionList[i].value
+      o.dataset.parentId = p_optionList[i].parentId
+      // console.log('HTMLSelectElement.prototype.buildAllOptions')
+      this.appendChild(o);
+    }
+  }
+  HTMLSelectElement.prototype.resetOption = function(){
+    this.value=0
+  }
+  HTMLSelectElement.prototype.setOption = function(p_value){
+    this.value=p_value
+  }
+
+  HTMLSelectElement.prototype.addOption = function(p_text, p_value){
+    // Ajouter à la fin des 'options' une balise 'option'
+    var o = document.createElement('option')
+    o.text = p_text
+    o.value = p_value
+    this.appendChild(o);
+  }
+  HTMLSelectElement.prototype.enableIt = function(){
+    this.disabled = false;
+  }
+  HTMLSelectElement.prototype.disableIt = function(){
+    this.disabled = true;
+  }
+
+
+// TABLE 
+// ============================ les DATA pour la classe 'classTable2020'
+
+// var myHeadersOrder0 = [ // 7 entêtes de colonne
+// 'theadKey0','theadKey1','theadKey2','theadKey3','theadKey4','theadKey5',
+// 'theadKey6']; 
+
+var myHeadersOrder0 = [ // 7 entêtes de colonne
+'theadKey0','theadKey1Inc',"theadKeyColspan6"]; 
+
+var myHeaders0 = [ // 2 lignes d'entête sur 7 colonnes à afficher
+// 1 ère ligne d'entête : 
+{theadKey0:"Voici notre beau code :)"},// colspan sur TOUTES les colonnes
+// 2 em ligne d'entête : 
+// {theadKey0:"Accepté ? ",theadKey1:"Le nom",theadKey2:'Le prénom',theadKey3:"Le téléphone",
+// theadKey5:"Le prix",theadKey4:"Le code",theadKey6:'Les boutons'}
+// ];
+{theadKey1Inc:"Date",theadKeyColspan6:'Titre'}
+];
+
+var myBodysOrder0 = [// 8 clés de data
+// 'dataTag_flag','nom','prenom','tel','code','prix','dataTag_btnOpen','dataTag_btnDel'];
+// 'date999','dataKey_colspan6','dataTag_btnOpen'];
+  'dataKey_col_1','titre_colspan_4','dataTag_btnOpen'];
+
+var myBodys0 =[ // 3 lignes de 8 colonnes 
+// ('id' n'est PAS affiché) donc 7 colonnes sont à afficher 
+{'dataKey_col_1': '10/05/2023','titre_colspan_4':'le chat',id:10,dataTag_btnOpen:'Ouvrir','fileName':123},
+{'dataKey_col_1': '11/05/2023','titre_colspan_4':'le chien',id:11,dataTag_btnOpen:'Ouvrir','fileName':123},
+{'dataKey_col_1': '27/05/2023','titre_colspan_4':'le sanglier',id:12,dataTag_btnOpen:'Ouvrir','fileName':123}];
+
+var myFootsOrder0 = [ // 2 clés de colonne pour 'footer'
+'foot0']
+
+var myFoots0 = [ // 3 lignes de 2 colonnes à afficher
+{foot0:"Lestortues67 - 05/2023"}
+];
+// ============================ les DATA == FIN 
+
+
+var c = new classHtmlElementsReservoir();
+
+// 2) Création d'une instance de la classe « classTable2020 »
+var t = new classTable2020(c);
+
+// 3) Création AUTOMATIQUE ( dans la 1ère div libre) d'une balise 'table' avec ses 3 enfants : 
+// thead,tbody,tfoot 
+t.createTableAutoSearch( );
+
+
+// 4) La balise <table> existe déjà mais ses éléments (thead,tbody,tfoot) sont vides
+
+// 4.1) remplacement du thead existant par un nouveau à partir des listes fournies en p_
+t.updateThead (myHeadersOrder0,myHeaders0,p_structKeys={},p_dataKeys={});
+//myHeadersOrder0 : ordre d'affiche des datas dans myHeaders0
+// myHeaders0 : les valeurs a afficher
+// p_structKeys={} les clés de structure
+// p_dataKeys={} les clés de data
+
+// 4.2) remplacement du tbody existant par un nouveau à partir des listes fournies en p_
+t.updateTbody (myBodysOrder0,myBodys0,{'tr':'trBan'},{}) 
+// {'tr':'trBan'} une clé de structure est fournie pour 'tr' 
+// Cela indique que la balise <tr> est modifié selon 'trBan' : le BG est jaune. 
+
+// 4.3) remplacement du tfoot existant par un nouveau à partir des listes fournies en p_
+t.updateTfoot (myFootsOrder0,myFoots0,{},{})
+
+// 5) Afficher la balise <table>
+t.send2ScreenTable();
+
+function eventManagerChangeOnSelect(p_event){
+    if(p_event.target.id == 'selectLangage'){
+      console.log("CHANGE event on LANGAGE p_event.target.value : ",p_event.target.value)
+      selectSousdossier.disableIt()
+      if(p_event.target.value == 0){
+        selectDossier.disableIt()
+        selectDossier.resetOption()
+        selectSousdossier.disableIt()
+        selectSousdossier.resetOption()
+      }
+      else{
+        // Rechercher dans la table 'dossier' toutes les lignes avec (parent_id = p_event.target.value)
+        selectDossier.clearOptions()
+        selectDossier.datasForOptions("/dossierWithParentId?langage="+p_event.target.value, 'dossier', p_valueKey="id")
+        selectDossier.enableIt()
+      }
+    }
+    if(p_event.target.id == 'selectDossier'){
+      console.log("CHANGE event on DOSSIER p_event.target : ",p_event.target)
+      if(p_event.target.value == 0){
+        selectSousdossier.disableIt()
+        selectSousdossier.resetOption()
+      }
+      else{ 
+        // Rechercher dans la table 'dossier' toutes les lignes avec (parent_id = p_event.target.value)
+        if(p_event.target.value == 999){
+          // alert("Ajouter un DOSSIER ? ")  
+          modalAjouterDossier.show()
+          document.getElementById("modalAjouterDossier_input").focus()
+        }
+        selectSousdossier.clearOptions()
+        selectSousdossier.datasForOptions("/sousdossierWithParentId?dossier="+p_event.target.value, 'sousdossier', p_valueKey="id")
+        selectSousdossier.enableIt()
+      }
+    }
+    if(p_event.target.id == 'selectSousdossier'){
+      console.log("CHANGE event on SOUS-DOSSIER p_event.target.value : ",p_event.target.value)
+      if(p_event.target.value == 999){
+          // alert("Ajouter un SOUS-DOSSIER ? ")  
+          modalAjouterSousDossier.show()
+          document.getElementById("modalAjouterSousDossier_input").focus()
+        }
+    }
+
+    // Demander les enregistrements à la table mySQL 'notrecode' à ce format : 
+    var myBodys1 =[ // 3 lignes de 8 colonnes 
+    {'dataKey_col_1': '26/05/2023','titre_colspan_4':'le chat est blanc',id:100,dataTag_btnOpen:'Ouvrir',fileName:456},
+    {'dataKey_col_1': '27/05/2023','titre_colspan_4':'le chien est grand',id:101,dataTag_btnOpen:'Ouvrir',fileName:456},
+    {'dataKey_col_1': '28/05/2023','titre_colspan_4':'le sanglier est gros et noir',id:102,dataTag_btnOpen:'Ouvrir',fileName:456}];
+
+    var l = selectLangage.readOption()
+    var d = selectDossier.readOption() 
+    var sd = selectSousdossier.readOption()
+    // console.log("Voici pour la table mySQL 'notrecode'  : ")
+    // console.log("Voici langage : ",l)
+    // console.log("Voici dossier : ",d)
+    // console.log("Voici sous-dossier : ",sd)
+
+    displayDataInTable(l[0].value, d[0].value, sd[0].value);
+
+    // Màj de <table> avec : 
+    // t.updateTbody (myBodysOrder0,myBodys1,{'tr':'trBan'},{'prenom':'upperText','tel':'italicText','code':'infoText'}) 
+    // var btns = document.getElementsByClassName('btn')
+    // for (var i = 0; i < btns.length; i++) {
+    //   btns[i].addEventListener('click',eventManager,false)
+    // }
+  }
+
+  function eventManagerBtn(p_event){
+    var breakPoint = 222;
+    if(p_event.target.id == "btnAjouter_AjoutDossier"){
+      console.log("Click sur btn btnAjouter_AjoutDossier")  
+      // var url = "newpage2?langage="+0+"&dossier="+0+"&sousdossier="+0+"&fileName="+""+"&id="+""
+      // window.open(url,"Page 2 ");
+
+      modalAjouterDossier.hide()
+    }
+    else if(p_event.target.id == "btnAjouter_AjoutSousDossier"){
+      console.log("Click sur btn btnAjouter_AjoutSousDossier")  
+      // var url = "newpage2?langage="+0+"&dossier="+0+"&sousdossier="+0+"&fileName="+""+"&id="+""
+      // window.open(url,"Page 2 ");
+      modalAjouterSousDossier.hide()
+    }
+    else if(p_event.target.id == "btnCreer"){
+      console.log("Click sur btn créer")  
+      // var url = "newpage2?langage="+0+"&dossier="+0+"&sousdossier="+0+"&fileName="+""+"&id="+""
+      var url = "newpage2"
+      window.open(url,"Page 2 ");
+    }
+    else {
+      console.log("Click sur btn avec dataset : ",p_event.target.dataset)
+      console.log("Click sur btn avec fileName : ",p_event.target.dataset.fileName)
+      console.log("Click sur btn avec id : ",p_event.target.dataset.id)
+
+      var l = selectLangage.readOption()[0].value
+      var d = selectDossier.readOption()[0].value
+      var sd = selectSousdossier.readOption()[0].value
+
+      // alert("Click sur btn avec ID : "+p_event.target.dataset.id)  
+      var url = "page2?langage="+l+"&dossier="+d+"&sousdossier="+sd+"&fileName="+p_event.target.dataset.fileName+"&id="+p_event.target.dataset.id
+      // window.open("http://localhost:5000/page2?langage=1&dossier=1&fileName=5s4zza74","Page 2 ");
+      window.open(url,"Page 2 ");
+    }
+
+  }
+
+function createMySelects(){
+  // 1) Ici on ajoute QUE la première ligne des <select> Langage, Dossier & Sous-dossier
+  selectLangage.addOption('Langage',0)
+  selectDossier.addOption('Dossier',0)
+  selectDossier.disableIt()
+  selectSousdossier.addOption('Sous-dossier',0)
+  selectSousdossier.disableIt()
+
+  // 2) Maintenant que la balise <select> 'langage' semble visuellement correcte
+  // Il est temps d'interroger le serveur pour obtenir la suite des balises <option>. 
+  // Elles seront ajoutées à la balise <select> 'langage' grace au prototype 'datasForOptions'
+
+  // Ajouter à <select> 'langage' TOUTES ses <option>
+  selectLangage.datasForOptions("/langageAll", 'langage', p_valueKey="id")
+}
+
+
+async function displayDataInTable(p_langage, p_dossier="", p_sousdossier=""){
+  // p_langage, p_dossier et p_sousdossier contiennent les valeurs des <option> sélectionnés
+  // dans les balises <select>. 
+  // Si les 'select' dossier et sousdossier sont vides (ne contiennent aucun <option> sélectionné) alors 
+  // on se sert des 2 p_ par défaut ainsi : rechercheCodeHtml(1) (1, est vide, est vide)
+  // Si le 'select' sousdossier est vide alors on se sert d'un seul p_ par défaut ainsi :  
+  // rechercheCodeHtml(1,1)
+  console.log("Voici les p_ passés")
+  console.log("p_langage : ",p_langage)
+  if (p_langage ==0){
+    p_langage = ""
+  }
+  console.log("p_dossier : ", p_dossier)
+  if (p_dossier ==0){
+    p_dossier = ""
+  }
+  console.log("p_sousdossier : ",p_sousdossier)
+  if (p_sousdossier ==0){
+    p_sousdossier = ""
+  }
+  var maListe = []
+  // var url = "https://jsonplaceholder.typicode.com/posts/"+p_id
+  var url = "/getNotreCodePapa?"+"langage="+p_langage+"&dossier="+p_dossier+"&sousdossier="+p_sousdossier
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  // Utiliser les méthodes de la classe 
+  console.log("displayDataInTable les datas reçues : ",jsonData)
+
+  var f = []
+  // Placer dans 'f' uniquement les clés souhaitées : 'dataKey_col_1', 'titre_colspan_4',
+  // 'fileName', 'id','dataTag_btnOpen'
+
+  for (var i = 0; i < jsonData.length; i++) {
+    d = {'dataKey_col_1':jsonData[i]['dateLongueTexteCreation'], 'titre_colspan_4':jsonData[i]['titre'],
+    'fileName':jsonData[i]['fichier'],'id':jsonData[i]['id'],dataTag_btnOpen:'Ouvrir' }
+    f.push(d)
+  }
+  console.log("displayDataInTable Voici les datas formattées : ",f)
+  updateTable(f)
+};
+
+
+async function rechercheCodeHtml(p_langage, p_dossier="", p_sousdossier=""){
+  // p_langage, p_dossier et p_sousdossier contiennent les valeurs des <option> sélectionnés
+  // dans les balises <select>. 
+  // Si les 'select' dossier et sousdossier sont vides (ne contiennent aucun <option>) alors 
+  // on se sert des 2 p_ par défaut ainsi : 
+  // rechercheCodeHtml(1)
+  // Si le 'select' sousdossier est vide alors on se sert d'un seul p_ par défaut ainsi :  
+  // rechercheCodeHtml(1,1)
+  var maListe = []
+  // var url = "https://jsonplaceholder.typicode.com/posts/"+p_id
+  var url = "/getNotreCodePapa?"+"langage="+p_langage+"&dossier="+p_dossier+"&sousdossier="+p_sousdossier
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  // Utiliser les méthodes de la classe 
+  console.log("jsonData : ",jsonData)
+  // var el = document.getElementById("voiciPage")
+  // el.innerHTML = jsonData
+};
+
+async function getAFile(p_id){
+  // Rechercher l'enregistrement associé à p_id dans la table mySQL 'notrecode' 
+  // pour obtenir les datas à afficher. 
+
+  // Retourne les datas à afficher : 
+  // les 3 <select>
+  // le titre
+  // le contenu du fichier HTML 
+  var maListe = []
+  // var url = "https://jsonplaceholder.typicode.com/posts/"+p_id
+  var url = "/getFileData?"+"id="+p_id
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  // Utiliser les méthodes de la classe 
+  console.log("jsonData : ",jsonData)
+  // var el = document.getElementById("voiciPage")
+  // el.innerHTML = jsonData
+};
+
+var global_a = "";
+var global_b = "";
+
+function resolveOK(p_data){
+  console.log("J'ai reçu de la data, la voici : ",p_data)
+  global_a = p_data
+}
+
+
+
+
+function rejectOK(p_data){
+  console.log("error ... : ",p_data)
+}
+
+
+function interrogerServeurAvecAPI(p_id) {
+  return new Promise(function(resolve, reject) {
+    // Effectuer la requête à l'API du serveur
+    // Utilisez fetch() ou XMLHttpRequest pour effectuer la requête
+    // fetch('localhost:5000/givedata')
+    fetch('givedata/'+p_id)
+      .then(function(response) {
+        if (response.ok) {
+          // Récupérer les données de réponse au format JSON
+          return response.json();
+        } else {
+          // En cas d'erreur de réponse, rejeter la Promesse avec un message d'erreur
+          throw new Error('Erreur de réponse du serveur');
+        }
+      })
+      .then(function(data) {
+        // Résoudre la Promesse avec les données reçues
+        global_b = data
+        resolveOK(data);
+      })
+      .catch(function(error) {
+        // Rejeter la Promesse en cas d'erreur
+        rejectOK(error);
+      });
+  });
+}
+
+var windowObjectReference = null; // variable globale
+function openMozillaPopup() {
+  if(windowObjectReference == null || windowObjectReference.closed)
+  /* si le pointeur vers l'objet window n'existe pas
+     ou s'il existe mais que la fenêtre a été fermée */
+  {
+    windowObjectReference = window.open("https://www.mozilla.org/",
+   "MozillaWindowName");
+    /* on le crée. La nouvelle fenêtre sera créée et affichée
+       par-dessus les éventuelles autres fenêtres. */
+  }
+  else
+  {
+    windowObjectReference.focus();
+    /* sinon la référence existe et la fenêtre n'est pas fermée
+       on peut donc l'amener devant avec la méthode focus()
+       sans avoir à recréer la fenêtre ou à recharger la 
+       ressource référencée. */
+  };
+}
+
+function lireInfosFichiers(){
+  // Lors du 1er chargement de cette page 10 enregistrements de la table mySQL 'notrecode'
+  // ont été placés dans la <div id="mydiv"> 
+
+  var files = JSON.parse(document.getElementById("mydiv").dataset.datatodisplay);  
+  // var files = JSON.parse((document.getElementById("mydiv").dataset.datatodisplay).decode("utf-8"));  
+  
+  console.log("data dans fichier page1.html : ",files)
+  var f = []
+  // Placer dans 'f' uniquement les clés souhaitées : 'dataKey_col_1', 'titre_colspan_4',
+  // 'fileName', 'id','dataTag_btnOpen'
+
+  for (var i = 0; i < files.length; i++) {
+    d = {'dataKey_col_1':files[i]['dateLongueTexteCreation'], 'titre_colspan_4':files[i]['titre'],
+    'fileName':files[i]['fichier'],'id':files[i]['id'],dataTag_btnOpen:'Ouvrir' }
+    f.push(d)
+  }
+  return f
+}
+
+function updateTable(p_data){
+  var myBodysOrder0 = ['dataKey_col_1','titre_colspan_4','dataTag_btnOpen'];
+
+  t.updateTbody (myBodysOrder0,p_data,{'tr':'trBan'},{'prenom':'upperText','titre_colspan_4':'italicText','code':'infoText'}) 
+    var btns = document.getElementsByClassName('btn')
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener('click',eventManagerBtn,false)
+    }
+}
+
+selectLangage.addEventListener('change',eventManagerChangeOnSelect,false)
+selectDossier.addEventListener('change',eventManagerChangeOnSelect,false)
+selectSousdossier.addEventListener('change',eventManagerChangeOnSelect,false)
+// btnCreer.addEventListener('click',eventManagerBtn,false)
+
+var btns = document.getElementsByClassName('btn')
+for (var i = 0; i < btns.length; i++) {
+  btns[i].addEventListener('click',eventManagerBtn,false)
+}
+
+
+window.onload = function WindowLoad(event) {
+    createMySelects();
+    updateTable(lireInfosFichiers());
+}
+
+// var modalAjouterDossier = new bootstrap.Modal(document.getElementById("modalAjouterDossier"), {});
+
+// var modalAjouterSousDossier = new bootstrap.Modal(document.getElementById("modalAjouterSousDossier"), {});
+
+
+
+</script>
+
+
+{% endblock scripts %}

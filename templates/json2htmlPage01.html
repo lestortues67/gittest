@@ -1,0 +1,144 @@
+{% extends "MyBase.html" %}
+
+{% block title %}Création de balise 01{% endblock title %}
+
+
+{% block content %}
+
+<div id="mydiv" class="container"  data-balises='{{ balButton01|tojson }}'>
+</div>
+
+
+     
+<div class="container" id="divForTags0">
+<p>Le button est crée à partir du code python qui passe ce dictionnaire : </p>
+
+
+</div>
+
+<div class="container">
+  <a href="http://localhost:5000/json2htmlTest01">Voir le dictionnaire au format JSON</a>
+  <p></p>
+</div>
+
+<div class="container" id=""><hr></div>
+
+<div class="d-flex justify-content-center container" id="divc0l0"></div>
+
+
+<div class="container" id=""><hr></div>
+
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" language="javascript">
+
+function lireInfosFichiers(){
+  // Lors du chargement de cette page un dict d'une balise <button>
+  // a été placé dans la <div id="mydiv"> 
+
+  return JSON.parse(document.getElementById("mydiv").dataset.balises)
+}
+
+// Dans code python : 
+// balButton01 = {'balise' : 'button',
+//     'id':'btn01',
+//     'class':['btn','btn-primary'],
+//     'dataset':[{'ref':123},{'ligne':456}],
+//     'innerHTML':'Ouvrir',
+//     'events':[{'onclick':'eventManager'},{'onmouseover':'eventManager'} ],
+//     'where':'divc0l0',
+//     'prototype':"HTMLButtonElement",
+//     'prototypeCodes':[".prototype.clickItA = function(){console.log('je suis le prototype A');}",
+//     ".prototype.clickItB = function(){console.log('je suis le prototype B');}"]
+//     }
+
+
+function eventManager(p_event){
+  // if(p_event.type == 'mouseover'){
+  //   alert('un mouseover sur btn !!')  
+  // }
+  if(p_event.type == 'click'){
+    alert('un click sur btn !!')  
+  }
+  console.log("p_event.target : ",p_event.target)
+  console.log("p_event.type : ",p_event.type)
+  console.log("p_event.type == mouseover: ",p_event.type == 'mouseover')
+  
+}
+
+
+function clicker(p_event){
+}
+
+function tagBuilder(p_dict){
+  // Créer la balise
+  var tag01 = document.createElement(p_dict['balise'])
+
+  // Ajouter son ID
+  tag01['id'] = p_dict['id']
+
+  // Ajouter son texte
+  tag01['innerHTML'] = p_dict['innerHTML']
+
+  // Ajouter les classes
+  for (var i = 0; i < p_dict['class'].length; i++) {
+    tag01['classList'].add(p_dict['class'][i])
+  }
+
+  // Ajouter les dataset
+  for (var i = 0; i < p_dict.dataset.length; i++) {
+    var myKey = Object.keys(p_dict.dataset[i])[0]
+    var myValue = Object.values(p_dict.dataset[i])[0]
+    tag01.dataset[myKey]=myValue
+  }
+
+  // Ajouter les gestionnaires d'événements
+  for (var i = 0; i < p_dict.events.length; i++) {
+    var myKey = Object.keys(p_dict.events[i])[0]
+    var myValue = Object.values(p_dict.events[i])[0]
+    tag01[myKey] = eval(myValue);
+  }
+
+  // Ajouter les prototypes 
+  for (var i = 0; i < p_dict['prototypeCodes'].length; i++) {
+    eval(p_dict['prototype']+p_dict['prototypeCodes'][i])
+  }
+
+  // Déposer la balise à l'emplacement indiqué dans 'where'
+  document.getElementById(p_dict['where']).appendChild(tag01)
+
+  // Voir la balise dans la console 
+  console.log("Voici la balise : ",tag01)
+}
+
+
+var b = lireInfosFichiers()
+
+console.log("Voici les datas json : ",b)
+
+tagBuilder(b)
+
+var btn = document.getElementById("btn01")
+
+const obj = {name: "John", age: 30, city: "New York"};
+const myDatas = JSON.stringify(b);
+
+// console.log("keys : ",myJSON)
+
+
+// document.getElementById("divForTags0").appendChild(myDatas)
+document.getElementById("divForTags0").innerHTML = document.getElementById("divForTags0").innerHTML + "<p></p>"
+document.getElementById("divForTags0").innerHTML = document.getElementById("divForTags0").innerHTML + myDatas
+document.getElementById("divForTags0").innerHTML = document.getElementById("divForTags0").innerHTML + "<p></p>"
+
+
+
+
+
+
+</script>
+
+
+{% endblock scripts %}

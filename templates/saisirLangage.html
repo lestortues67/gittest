@@ -1,0 +1,42 @@
+{% extends "MyBase.html" %}
+
+{% block title %}SELECT Classe{% endblock title %}
+
+
+{% block content %}
+
+  <div class="container">
+    
+  
+
+
+  <form action="/saisirLangage" method="POST">
+
+  <div class="mb-3">
+    <label for="disabledInput" class="form-label">Un nouveau langage</label>
+    <input class="form-control" name="langage" id="disabledInput" type="text" placeholder="Saisir un langage..." >    
+  </div>
+  <button type="submit" class="btn btn-primary" action="/saisirLangage" >Enregistrer</button>
+  <button type="button" class="btn-close" aria-label="Close"></button>
+</form>
+
+</div>
+
+
+
+
+
+
+
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+
+<script type="text/javascript" language="javascript">
+
+
+</script>
+
+
+{% endblock scripts %}

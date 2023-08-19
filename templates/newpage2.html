@@ -1,0 +1,1048 @@
+{% extends "MyBase.html" %}
+
+{% block title %}Page 2{% endblock title %}
+
+
+{% block content %}
+  <div class=" container d-flex justify-content-center alert alert-danger fs-1" role="alert">
+  <b>Création d'une nouvelle page</b> <br>
+  
+  </div>
+
+  <div class="container" id="div4message">
+    <p id="p4message"></p>
+  </div>
+
+
+
+   <div class="container d-flex flex-row justify-content-around" id="divSelect0">
+    
+      <select class="text-danger" id = "selectLangage"></select>
+      <select class="text-danger" id = "selectDossier"></select>
+      <select class="" id = "selectSousdossier"></select>  
+   </div>
+
+  <div class="container d-flex flex-row justify-content-around" id="divTitre">
+    <label>Titre</label>
+    <input type="text" id="titre" name="titre">
+    
+  </div>
+
+
+
+
+
+
+    <!-- Editeur de texte TinyMCE -->
+    <div class="container" id="maDiv">
+      <textarea id="tinymceEditor" name="fichier">   
+      </textarea>
+      </div>
+      <!-- Buttons Enregistrer/Supprimer/Copier -->
+      <div class="container d-flex flex-row justify-content-around">
+        <button id="btnEnregistrer" class="btn btn-primary" disabled="true">Enregistrer/Save</button>
+        <button class="btn btn-primary" id="btnAnnuler">Annuler la création de la page</button>
+      </div>
+
+
+
+      <!-- Modal -->
+      <div id="myModal" class="modal">
+       <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Créer un dossier</h5>
+              <button type="button" class="btn-close fermer" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <label>Nom du dossier:</label>
+              <input class="form-control" type="text" name="" id="monTxt">
+            </div>
+            <div class="modal-footer" id="monFooter">
+              <button type="button" class="btn btn-secondary fermer" data-bs-dismiss="modal" id="fermer">Close</button>
+              <button type="button" class="btn btn-primary addOption" id="addLigneDossier" >Ajouter</button> 
+            </div>
+          </div>
+        </div>
+      </div>
+
+<!-- Modal -->
+<div id="modalAjouterDossier" class="modal">
+ <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ajouter un dossier</h5>
+        <button type="button" class="btn-close fermer" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label>Nom du dossier:</label>
+        <input class="form-control" type="text" name="" id="modalAjouterDossier_input">
+      </div>
+      <div class="modal-footer" id="monFooter">
+        <button type="button" class="btn btn-secondary fermer" data-bs-dismiss="modal" id="btnAnnuler_AjoutDossier">Annuler</button>
+        <button type="button" class="btn btn-primary addOption" id="btnAjouter_AjoutDossier" >Ajouter</button> 
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div id="modalAjouterSousDossier" class="modal">
+ <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ajouter un sous-dossier</h5>
+        <button type="button" class="btn-close fermer" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label>Nom du sous-dossier:</label>
+        <input class="form-control" type="text" name="" id="modalAjouterSousDossier_input">
+      </div>
+      <div class="modal-footer" id="monFooter">
+        <button type="button" class="btn btn-secondary fermer" data-bs-dismiss="modal" id="btnAnnuler_AjoutSousDossier">Annuler</button>
+        <button type="button" class="btn btn-primary addOption" id="btnAjouter_AjoutSousDossier" >Ajouter</button> 
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script src="static/lib_fetch.js"></script>
+<script type="text/javascript" language="javascript">
+
+  function receiveDataFromFetcher(p_jsondata, p_id){
+    // Cette f_ est exécutée après la reception des datas dans 'fetcher()'
+
+    // 'balise' est le destinataire des datas à afficher
+    var balise = document.getElementById(p_id)
+
+    balise.innerHTML = p_jsondata['id'] + " " +p_jsondata['userId'] + " " + p_jsondata['title']+" "+ p_jsondata['completed']+"+++++AC/DC+++++++++++++++"
+
+    // 'result' est une variable globale définie à l'extérieur de cette f_
+    result = p_jsondata
+
+    console.log("fetch m'a passé les datas. Les voici : ",p_jsondata)
+  }
+
+  function updateSelectFromFetcher(p_jsondata, p_id){
+    // Cette f_ est exécutée après la reception des datas dans 'fetcher()'
+
+    // On récupère seulement : 
+    // le texte avec la clé 'dossier' & son ID avec la clé 'id'
+
+    console.log("Dans : function updateSelectFromFetcher(p_jsondata, p_id)")
+
+    console.log("fetch m'a passé les datas. Les voici : ",p_jsondata)
+
+    console.log("p_jsondata['data']['id'] : ",p_jsondata['data']['id'])
+    console.log("p_jsondata['data']['dossier'] : ",p_jsondata['data']['dossier'])
+
+
+    // 'selectTag' est le destinataire des datas à afficher
+    var selectTag = document.getElementById(p_id)
+
+    // Demander au serveur tous les records de la table 'Dossier' pour un langage donné
+
+    // /dossierWithParentIdAjouter") # sousdossierWithParentIdAjouter
+    // def mydossierWithParentIdAjouter():
+    // # retourner toutes les lignes de la table 'dossier' 
+    // # pour un langage donné dans request.args.get('langage')
+    // langage = request.args.get('langage')
+
+
+
+    // HTMLSelectElement.prototype.addOption = function(p_text, p_value){
+    selectTag.addOption(p_jsondata['data']['dossier'], p_jsondata['data']['id'])
+
+    selectTag.setOption(p_jsondata['data']['id'])
+
+
+
+    // selectTag.innerHTML = p_jsondata['id'] + " " +p_jsondata['userId'] + " " + p_jsondata['title']+" "+ p_jsondata['completed']+"+++++AC/DC+++++++++++++++"
+
+    // 'result' est une variable globale définie à l'extérieur de cette f_
+    result = p_jsondata
+  }
+
+
+  function fetcher(p_url, p_f, p_id=""){
+    // Cette f_ effectue une requête vers p_url ex : p_url = https://jsonplaceholder.typicode.com/todos/1
+    // Lorsque la requête a obtenu ses datas, le code de la fonction p_f est executé
+    // p_id est facultatif, ce pourrait être l'id d'une balise HTML qui devra afficher les datas
+    fetch(p_url)
+    .then(function(reponse){
+      // Convertir la réponse en JSON
+      return reponse.json()
+    })
+    .then(function(jsonData){
+      // Les datas reçues sont au format JSON, les passer à p_f
+      console.log("Voici jsonData dans fetcher() : ",jsonData)
+      p_f(jsonData, p_id)
+      return jsonData
+    })
+    .then(function (jsonData){
+      // Tout s'est bien passé, informer
+      console.log("...") 
+      console.log("Dans function fetcher")
+      console.log("'tf': ",true, "data : ",jsonData)
+    })
+    .catch(function(error){
+      // Une erreur s'est produite, informer 
+      console.log("Une erreur s'est produite, informer ")
+      console.log("'tf': ",false, "data : ",error)
+      p_f(error)
+    })
+  }
+
+
+  tinymce.init({
+    selector: 'textarea#tinymceEditor', 
+    plugins:'code', 
+    width:1300,
+    height:370,
+    menubar:false,
+    statusbar:false,
+    setup: 
+      function(editor) { 
+        // editor.on('change', eventManagerChange_Tinymce);
+        editor.on('input', eventManagerInput_Tinymce);
+      }
+  });
+
+//  window.onload = function WindowLoad(event) {
+//     createMySelects();
+// }
+// var editor = tinymce.get("tinymceEditor");
+
+var html0 = `
+  <div>
+    <span>Some HTML in a span here</span>
+    <p>Some HTML in a p here</p>
+    <p>Some HTML in a p here</p>
+  </div>
+`;
+
+
+function readyToSave(){
+  // Comment start 
+
+  // Comment end
+  var langagePresent = ( selectLangage.readOption()[0].value > 0)
+  var dossierPresent = ( selectDossier.readOption()[0].value > 0)
+  var titrePresent = !(document.getElementById('titre').value == "")
+  var editorContentNotEmpty = !( tinymce.activeEditor.getContent() == "")
+
+  if (langagePresent && dossierPresent && titrePresent && editorContentNotEmpty){
+    return true;
+  }
+  else{
+    return false;
+  }
+
+}
+
+function eventManagerInput_Tinymce(p_event){
+  console.log("Event INPUT sur editeur tinyMCE : ",p_event)
+  // Vérifier que ces conditions sont 'true' 
+  // Les <select> 'Langage' & 'Dossier' pointent sur une valeur
+  // Le titre est NON vide
+  // L'éditeur TinyMCE est NON vide
+  if (readyToSave()){
+    document.getElementById("btnEnregistrer").disabled = false    
+  }
+  else {
+    document.getElementById("btnEnregistrer").disabled = true    
+  }
+}
+
+
+function eventManagerChange_Tinymce(p_event){
+  console.log("Event CHANGE sur editeur tinyMCE : ",p_event)
+  // Vérifier que ces conditions sont 'true' 
+  // Les 3 <select> 'Langage' & 'Dossier' pointent sur une valeur
+}
+
+
+
+function ajouterContenu(p_data){
+  tinyMCE.activeEditor.setContent(p_data);
+}
+
+
+function ajouterContenu0(p_data){
+  tinymce.get("tinymceEditor").setContent(p_data);
+}
+
+
+
+function ajouter()
+  {
+    tinymce.triggerSave(true,true);
+    alert(document.getElementById("description").value)
+  }
+
+  var selectLangage = document.getElementById("selectLangage")
+  var selectDossier = document.getElementById("selectDossier")
+  var selectSousdossier = document.getElementById("selectSousdossier")
+
+  HTMLSelectElement.prototype.addToClass = function(p_string){
+    this.classList.add(p_string)
+  }
+  HTMLSelectElement.prototype.removeFromClass = function(p_string){
+    this.classList.remove(p_string)
+  }
+  HTMLSelectElement.prototype.replaceFromClass = function(p_stringToReplace, p_string){
+    this.classList.replace(p_stringToReplace, p_string)
+  }
+  HTMLSelectElement.prototype.toggleFromClass = function(p_string){
+    this.classList.toggle(p_string)
+  }
+  HTMLSelectElement.prototype.clearOptions = function(){
+    while(this.lastChild.value>0){
+      // console.log("this.firstChild.value : ",this.firstChild.value)
+      // console.log("this.lastChild.value : ",this.lastChild.value)
+      // console.log("this.firstChild.value>0 : ",this.firstChild.value>0)
+      // this.removeChild(this.firstChild)
+      this.removeChild(this.lastChild)
+    }
+  }
+  HTMLSelectElement.prototype.readOption = function(){
+    var arr = []
+    var id = this.id
+    var value = this.value
+    var text = this.selectedOptions[0].text
+    var d = {'id':id,'value':value,'texte':text}
+    arr.push(d)
+    return arr
+  }
+  HTMLSelectElement.prototype.datasForOptions = function(p_url, p_textKey, p_valueKey="id"){ 
+    // Utiliser l'url pour obtenir des datas pour créer & ajouter des <option>
+    // p_url englobe les données de paramètres/arguments de la requête GET, par exemple : 
+            // <select> langage : p_url = "/langageAll"
+            // <select> dossier : p_url = "/dossierWithParentIdAjouter?langage=1"
+            // <select> sousdossier : p_url = "/sousdossierWithParentIdAjouter?dossier=2"
+
+    // p_textKey peur prendre 3 valeurs : langage, dossier ou sousdossier
+    // p_valueKey="id" convient pour les 3 cas 
+
+
+    //  à la table mySQL 'dossier' toutes ses lignes pour 
+    // parentId == p_parentId
+    // Pour en créer des <option>
+    var arr = [];
+    var t = this;
+    console.log("L'URL utilisée : ",p_url)
+      fetch(p_url)
+      .then(function(reponse){
+      // Convertir la réponse en JSON
+      return reponse.json()
+      })
+      .then(function(jsondata){
+        // Utiliser les données ici
+        console.log("datasForOptions : Utiliser les données ici")
+        for (var i = 0; i < jsondata.length; i++) {
+          var d  = {}
+          d['text'] = jsondata[i][p_textKey]
+          d['value'] = jsondata[i][p_valueKey]
+          arr.push(d)
+        }
+        // console.log("datasForOptions Voici URL : ",p_url)
+        // console.log("datasForOptions Voici array : ",arr)
+        // console.log("datasForOptions Voici THIS : ",this)
+        t.buildAllOptions(arr)
+      })
+      .catch(function(erreur){
+        // Gérez les erreurs ici
+        console.error('Une erreur s\'est produite dans newpage2.html:', erreur);
+        // return erreur
+      })
+      // this.buildAllOptions(arr)
+  };
+  HTMLSelectElement.prototype.buildAllOptionsOLD = function(p_optionList){
+    for (var i = 0; i < p_optionList.length; i++) {
+      var o = document.createElement('option')
+      // console.log("p_optionList[i].text : ",p_optionList[i].text)
+      // console.log("p_optionList[i].value : ",p_optionList[i].value)
+      o.innerHTML = p_optionList[i].text
+      o.value = p_optionList[i].value
+      // this.appendChild(o);
+      this.add(o);
+    }
+  }
+  HTMLSelectElement.prototype.buildAllOptions = function(p_listeChainage, p_f_miseEnFormeDatas){
+    // ex : p_listeChainage => [fetcher(url2), fetcher(url3) , fetcher(url4)]
+    fetcherChain(p_listeChainage, p_f_miseEnFormeDatas, this.id)
+    for (var i = 0; i < p_optionList.length; i++) {
+      var o = document.createElement('option')
+      // console.log("p_optionList[i].text : ",p_optionList[i].text)
+      // console.log("p_optionList[i].value : ",p_optionList[i].value)
+      o.innerHTML = p_optionList[i].text
+      o.value = p_optionList[i].value
+      // this.appendChild(o);
+      this.add(o);
+    }
+  }
+  HTMLSelectElement.prototype.resetOption = function(){
+    this.value=0
+  }
+  HTMLSelectElement.prototype.setOption = function(p_value){
+    this.value=p_value
+  }
+
+  HTMLSelectElement.prototype.returnValueFromOption = function(p_text){
+    // Dans <option> 'value' est un nbr et innerHTML est le texte
+    // visible. 
+    // Retourner le nbr 'value' pour le 'innerHTML' (le texte) fourni
+    for (var i = 0; i < this.options.length; i++) {
+      if (this.options[i].innerHTML == p_text){
+        return this.options[i].value
+      }
+    }
+    return null
+  }
+
+  HTMLSelectElement.prototype.addOption = function(p_text, p_value){
+    // Ajouter à la fin des 'options' une balise 'option'
+    var o = document.createElement('option')
+    o.text = p_text
+    o.value = p_value
+    // this.appendChild(o);
+    this.add(o,null);
+    console.log("select.children : ",this.children)
+  }
+  HTMLSelectElement.prototype.enableIt = function(){
+    this.disabled = false;
+  }
+  HTMLSelectElement.prototype.disableIt = function(){
+    this.disabled = true;
+  }
+
+function createStartSelects(){
+  console.log("createStartSelects")
+  // 1) Ici on ajoute QUE la première ligne des <select> Langage, Dossier & Sous-dossier
+  selectLangage.addOption('Langage',0)
+  selectDossier.addOption('Dossier',0)
+  selectDossier.disableIt()
+  selectSousdossier.addOption('Sous-dossier',0)
+  selectSousdossier.disableIt()
+
+  // 2) Maintenant que la balise <select> 'langage' semble visuellement correcte
+  // Il est temps d'interroger le serveur pour obtenir la suite des balises <option>. 
+  // Elles seront ajoutées à la balise <select> 'langage' grace au prototype 'datasForOptions'
+
+  // Ajouter à <select> 'langage' TOUTES ses <option>
+  // selectLangage.datasForOptions("/langageAll", 'langage', p_valueKey="id")
+  selectLangage.datasForOptions("langageAll", 'langage', p_valueKey="id")
+}
+
+
+
+function openInNewTab(p_url) {
+  var win = window.open(p_url, '_blank');
+  win.focus();
+  return win;
+}
+
+// getAFile(lireIdFichier().id,lireIdFichier().fileName)
+async function getAFile(p_id, p_fileName){
+  // Rechercher l'enregistrement associé à p_id dans la table mySQL 'notrecode' 
+  // pour obtenir les datas à afficher. 
+
+  // Retourne les datas à afficher : 
+  // les 3 <select>
+  // le titre
+  // le contenu du fichier HTML 
+  var maListe = []
+  // var url = "https://jsonplaceholder.typicode.com/posts/"+p_id
+  var url = "/getFileData?"+"id="+p_id+"&fileName="+p_fileName
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  // Utiliser les méthodes de la classe 
+  console.log("jsonData : ",jsonData)
+  // var el = document.getElementById("voiciPage")
+  // el.innerHTML = jsonData
+};
+
+function lireIdFichier(){
+  // Lors du chargement de cette page l'ID de l'enregistrement et le nom du fichier à ouvrir ont été placés dans la <div id="mydiv"> 
+
+  var id = JSON.parse(document.getElementById("mydiv").dataset.id);  
+  var fileName = JSON.parse(document.getElementById("mydiv").dataset.filename);  
+  var titre = JSON.parse(document.getElementById("mydiv").dataset.titre);  
+  var file = JSON.parse(document.getElementById("mydiv").dataset.file);  
+
+  var arrLangage = JSON.parse(document.getElementById("mydiv").dataset.arrlangage);  
+  var arrDossier = JSON.parse(document.getElementById("mydiv").dataset.arrdossier);  
+  var arrSousdossier = JSON.parse(document.getElementById("mydiv").dataset.arrsousdossier);  
+
+  var langage = JSON.parse(document.getElementById("mydiv").dataset.langage);  
+  var dossier = JSON.parse(document.getElementById("mydiv").dataset.dossier);  
+  var sousdossier = JSON.parse(document.getElementById("mydiv").dataset.sousdossier);  
+
+  d = {'id': id,
+  'filename': fileName,
+  'titre' : titre,
+  'file' : file,
+  'arrLangage':arrLangage,
+  'arrDossier' : arrDossier,
+  'arrSousdossier' : arrSousdossier,
+  'langage':langage,
+  'dossier':dossier,
+  'sousdossier':sousdossier}
+
+  return d
+}
+
+// placerDataSurEcran(lireIdFichier().id,lireIdFichier().fileName)
+async function placerDataSurEcranOLD(p_id, p_fileName){
+  // Rechercher les datas 
+  var url = "/getFileData?"+"id="+p_id+"&fileName="+p_fileName
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  // Utiliser les méthodes de la classe 
+  console.log("placerDataSurEcran : ",jsonData)
+  console.log("Le contenu du fichier : ",jsonData.fileData)
+  console.log("Le select langage : ",jsonData.langage)
+  console.log("Le select dossier : ",jsonData.dossier)
+  console.log("Le select sousdossier : ",jsonData.sousdossier)
+
+  // Placer le fichier dans tinyMCE 
+  ajouterContenu(jsonData.fileData)
+
+  // Remplir le titre
+  document.getElementById('titre').value = jsonData.titre
+
+
+  // Ajuster les 3 <select>
+  selectLangage.enableIt()
+  selectLangage.setOption(jsonData.langage)
+
+  selectDossier.enableIt()
+  selectDossier.datasForOptions("/dossierWithParentIdAjouter?langage="+jsonData.langage, 'dossier', p_valueKey="id")
+  selectDossier.setOption(jsonData.dossier)
+
+  selectSousdossier.enableIt()
+  selectSousdossier.datasForOptions("/sousdossierWithParentIdAjouter?sousdossier="+jsonData.sousdossier, 'sousdossier', p_valueKey="id")
+  selectSousdossier.setOption(jsonData.sousdossier)
+  
+
+  // Rechercher l'enregistrement associé à p_id dans la table mySQL 'notrecode' 
+  // pour obtenir les datas à afficher. 
+
+  // Retourne les datas à afficher : 
+  // les 3 <select>
+  // le titre
+  // le contenu du fichier HTML 
+  var maListe = []
+  // var url = "https://jsonplaceholder.typicode.com/posts/"+p_id
+  
+  // var el = document.getElementById("voiciPage")
+  // el.innerHTML = jsonData
+};
+
+async function ajouterDossierOLD0(p_dossier, p_parentId){
+  // Dans la table 'Dossier' ajouter une valeur 
+
+  // PYTHON
+  // @app.route("/addDossier")
+  // def myaddDossier():
+  // # Ajouter un dossier à la table 'Dossier'
+  // # pour un dossier donné dans request.args.get('dossier')
+  // nomDossier = request.args.get('nomDossier')
+  // parentIdDossier = request.args.get('parentIdDossier')
+  
+  var url = "/addDossier?"+"dossier="+p_dossier+"&parentIdDossier="+p_parentId
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  // Utiliser les méthodes de la classe 
+  console.log("ajouterDossier la réponse : ",jsonData)
+  // var el = document.getElementById("voiciPage")
+  // el.innerHTML = jsonData
+};
+
+function ajouterDossierOLD1(p_dossier, p_parentId){
+  // Dans la table 'Dossier' ajouter une valeur 
+
+  var url = "/addDossier?"+"dossier="+p_dossier+"&parentIdDossier="+p_parentId
+  // function updateSelectFromFetcher(p_jsondata, p_id){
+  fetcher(url, updateSelectFromFetcher, "selectDossier")
+
+
+};
+
+
+async function ajouterDossier(p_dossier, p_parentId){
+  // Dans la table 'Dossier' ajouter une valeur 
+
+  var maListe = []
+  var url = "/addDossier?"+"dossier="+p_dossier+"&parentIdDossier="+p_parentId
+  const response0 = await fetch(url);
+  const jsonData = await response0.json();
+  console.log("jsonData : ",jsonData)
+  return jsonData
+};
+
+
+
+
+
+async function ajouterSousDossier(p_sousdossier, p_parentId){
+  // Dans la table 'Sousdossier' ajouter une valeur 
+  
+  var url = "/addSousDossier?"+"nomSousDossier="+p_sousdossier+"&parentIdSousDossier="+p_parentId
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  // Utiliser les méthodes de la classe 
+  console.log("ajouterSousDossier la réponse : ",jsonData)
+};
+
+    
+function placerDataSurEcran(p_langage, p_dossier, p_sousdossier, p_id, p_fileName, p_titre, p_file, p_arrLangage, p_arrDossier, p_arrSousdossier){
+  
+  // Placer le fichier dans tinyMCE 
+  ajouterContenu(p_file)
+
+  // Remplir le titre
+  document.getElementById('titre').value = p_titre
+
+
+  // Ajuster les 3 <select>
+  var arrL = []
+
+  for (var i = 0; i < p_arrLangage.length; i++) {
+    console.log("Langage : ",p_arrLangage[i].langage)
+    console.log("id : ",p_arrLangage[i].id)
+    arrL.push({'text':p_arrLangage[i].langage,'value':p_arrLangage[i].id}) 
+  }
+
+  selectLangage.enableIt()
+  selectLangage.buildAllOptions(arrL)
+  selectLangage.setOption(p_langage)
+
+  selectDossier.enableIt()
+  console.log("p_arrDossier : ",p_arrDossier)
+
+  var arrD = []
+
+  for (var i = 0; i < p_arrDossier.length; i++) {
+    console.log("dossier : ",p_arrDossier[i].dossier)
+    console.log("id : ",p_arrDossier[i].id)
+    arrD.push({'text':p_arrDossier[i].dossier,'value':p_arrDossier[i].id}) 
+  }
+  selectDossier.buildAllOptions(arrD)
+  selectDossier.setOption(p_dossier)
+
+
+  var arrSd = []
+
+  for (var i = 0; i < p_arrSousdossier.length; i++) {
+    console.log("dossier : ",p_arrSousdossier[i].sousdossier)
+    console.log("id : ",p_arrSousdossier[i].id)
+    arrSd.push({'text':p_arrSousdossier[i].sousdossier,'value':p_arrSousdossier[i].id}) 
+  }
+  selectSousdossier.buildAllOptions(arrSd)
+  selectSousdossier.setOption(p_sousdossier)
+};
+
+
+
+
+function createMySelects(){
+  // 1) Ici on ajoute QUE la première ligne des <select> Langage, Dossier & Sous-dossier
+  selectLangage.addOption('Langage',0)
+  selectDossier.addOption('Dossier',0)
+  selectDossier.disableIt()
+  selectSousdossier.addOption('Sous-dossier',0)
+  selectSousdossier.disableIt()
+
+  // 2) Maintenant que la balise <select> 'langage' semble visuellement correcte
+  // Il est temps d'interroger le serveur pour obtenir la suite des balises <option>. 
+  // Elles seront ajoutées à la balise <select> 'langage' grace au prototype 'datasForOptions'
+
+  // Ajouter à <select> 'langage' TOUTES ses <option>
+  selectLangage.datasForOptions("/langageAll", 'langage', p_valueKey="id")
+  // selectDossier.datasForOptions("/dossierWithParentId?langage="+p_event.target.value, 'dossier', p_valueKey="id")
+}
+
+function eventManagerChangeOnSelect(p_event){
+    if(p_event.target.id == 'selectLangage'){
+      console.log("CHANGE event on langage")
+      console.log("p_event.target.value : ",p_event.target.value)
+      selectSousdossier.disableIt()
+      if(p_event.target.value == 0){
+        selectLangage.addToClass("text-danger")
+        selectDossier.disableIt()
+        selectDossier.resetOption()
+        selectDossier.addToClass("text-danger")
+        selectSousdossier.disableIt()
+        selectSousdossier.resetOption()
+      }
+      else{
+        // Rechercher dans la table 'dossier' toutes les lignes avec (parent_id = p_event.target.value)
+        selectLangage.removeFromClass("text-danger")
+        selectDossier.clearOptions()
+        selectDossier.datasForOptions("/dossierWithParentIdAjouter?langage="+p_event.target.value, 'dossier', p_valueKey="id")
+        selectDossier.enableIt()
+      }
+    }
+    if(p_event.target.id == 'selectDossier'){
+      console.log("CHANGE event on DOSSIER")
+      console.log("p_event.target.value : ",p_event.target.value)
+      if(p_event.target.value == 0){
+        selectSousdossier.disableIt()
+        selectSousdossier.resetOption()
+        selectDossier.addToClass("text-danger")
+      }
+      else{ 
+        // Rechercher dans la table 'dossier' toutes les lignes avec (parent_id = p_event.target.value)
+        selectDossier.removeFromClass("text-danger")
+        if(p_event.target.value == 999){
+          // alert("Ajouter un DOSSIER ? ")  
+          modalAjouterDossier.show()
+          document.getElementById("modalAjouterDossier_input").focus()
+        }
+        else{
+          selectSousdossier.clearOptions()
+          selectSousdossier.datasForOptions("/sousdossierWithParentIdAjouter?dossier="+p_event.target.value, 'sousdossier', p_valueKey="id")
+          selectSousdossier.enableIt()  
+        }
+        
+      }
+    }
+    // NEW 
+    if(p_event.target.id == 'selectSousdossier'){
+      console.log("CHANGE event on SOUS-DOSSIER")
+      console.log("p_event.target.value : ",p_event.target.value)
+      if(p_event.target.value == 999){
+          // alert("Ajouter un SOUS-DOSSIER ? ")  
+          modalAjouterSousDossier.show()
+          document.getElementById("modalAjouterSousDossier_input").focus()
+      }
+      if(p_event.target.value == 0){
+        selectSousdossier.addToClass("text-danger")
+      }
+      else{ 
+        selectSousdossier.removeFromClass("text-danger")
+      }
+    }
+  // Vérifier que ces conditions sont 'true' 
+  // Les <select> 'Langage' & 'Dossier' pointent sur une valeur
+  // Le titre est NON vide
+  // L'éditeur TinyMCE est NON vide
+  if (readyToSave()){
+    document.getElementById("btnEnregistrer").disabled = false    
+  }
+  else {
+    document.getElementById("btnEnregistrer").disabled = true    
+  }
+  }
+
+
+
+function selectChange(){
+  // Tester s'il est possible de générer artificiellement un event 'change'
+
+  // Sélectionnez l'élément <select> que vous souhaitez déclencher
+  var selectElement = document.getElementById('mon-select');
+
+  // Créez un nouvel événement "change"
+  var event = new Event('change');
+
+  // Déclenchez l'événement "change" sur l'élément <select>
+  selectElement.dispatchEvent(event);
+
+  // Placer dans tinyMCE 
+  ajouterContenu(p_data)
+
+  // Ajuster les 3 <select>
+}
+
+async function envoyerCodeHtml(p_url, p_titre, p_langage, p_dossier, p_sousdossier, p_content ){
+  var d = {'titre':p_titre, 'langage':p_langage, 'dossier':p_dossier, 'sousdossier':p_sousdossier, 'file':p_content}
+    let response = await fetch(p_url,{
+      method:"POST",
+      headers: {
+          "Content-Type": "application/json",
+          "tintin":"milou"
+        },
+        body: JSON.stringify(d), 
+        // ici le type de données doit être identique à la ligne 8
+    });
+    // reponseServeur = await response.json();
+    // console.log("Réponse : ",reponseServeur)  
+    window.close()
+
+    // tinyMCE.activeEditor.setContent("");
+    // selectLangage.setOption(0)
+    // selectDossier.setOption(0)
+    // selectSousdossier.setOption(0)
+    // document.getElementById('titre').value = ""
+
+  }
+
+
+function eventManagerSave(){
+  // Le btn 'enregistrer' a été cliqué, on enregistre sur le serveur
+
+  if (true){
+    var content = tinyMCE.activeEditor.getContent()
+
+    var langage = selectLangage.readOption()[0].value
+    var dossier = selectDossier.readOption()[0].value
+    var sousdossier = selectSousdossier.readOption()[0].value
+    var titre = document.getElementById('titre').value
+    var url = "/newNotrecode2"
+    envoyerCodeHtml(url, titre, langage, dossier, sousdossier, content )  
+    }
+  else{
+    alert( 'Modifier le code dans function eventManagerSave() pour enregistrer')
+  }  
+}
+
+function eventManagerTitre(p_event){
+  // Vérifier que ces conditions sont 'true' 
+  // Les <select> 'Langage' & 'Dossier' pointent sur une valeur
+  // Le titre est NON vide
+  // L'éditeur TinyMCE est NON vide
+  if (readyToSave()){
+    document.getElementById("btnEnregistrer").disabled = false    
+  }
+  else {
+    document.getElementById("btnEnregistrer").disabled = true    
+  }
+}
+
+function eventManagerBtnAnnuler(p_event){
+  window.close()
+}
+
+function eventManagerBtnAjouter_AjoutDossierOLD(p_event){
+  if(p_event.target.id == "btnAjouter_AjoutDossier"){
+    var a = 100;
+      console.log("Click sur btn btnAjouter_AjoutDossier")  
+      // var url = "newpage2?langage="+0+"&dossier="+0+"&sousdossier="+0+"&fileName="+""+"&id="+""
+      // window.open(url,"Page 2 ");
+
+      modalAjouterDossier.hide()
+      var p_dossier = document.getElementById("modalAjouterDossier_input").value.trim()
+      document.getElementById("modalAjouterDossier_input").value = ""
+      // var p_parentId = selectLangage.selectedIndex
+      var p_parentId = selectLangage.value
+      var url = "/dossierWithParentIdAjouter?langage="+p_parentId
+      console.log("URL : ",url)
+      console.log("p_dossier : ",p_dossier)
+      console.log("p_parentId : ",p_parentId)
+
+      ajouterDossier(p_dossier, p_parentId)
+      // Màj du <select> 'Dossier' 
+      // Rechercher dans la table 'dossier' toutes les lignes avec (parent_id = p_event.target.value)
+      selectDossier.clearOptions()
+      // selectDossier.datasForOptions("/dossierWithParentIdAjouter?langage="+p_parentId)
+      selectDossier.datasForOptions("/dossierWithParentIdAjouter?langage="+p_parentId, "dossier")
+      selectDossier.enableIt()
+      var v = selectDossier.returnValueFromOption(p_dossier)
+      console.log("Quelle le texte recherché : ",p_dossier)
+      console.log("Quelle est la réponse : ", v)
+      selectDossier.setOption(v)
+
+      // Placer le <select> sur le nouveau <option> fraichement crée
+    }
+}
+
+function eventManagerBtnAjouter_AjoutDossier(p_event){
+  if(p_event.target.id == "btnAjouter_AjoutDossier"){
+    var a = 100;
+      console.log("Click sur btn btnAjouter_AjoutDossier")  
+      // var url = "newpage2?langage="+0+"&dossier="+0+"&sousdossier="+0+"&fileName="+""+"&id="+""
+      // window.open(url,"Page 2 ");
+
+      modalAjouterDossier.hide()
+      var p_dossier = document.getElementById("modalAjouterDossier_input").value.trim()
+      document.getElementById("modalAjouterDossier_input").value = ""
+
+      var p_parentId = selectLangage.value
+      // var url = "/dossierWithParentIdAjouter?langage="+p_parentId
+      // console.log("URL : ",url)
+      console.log("p_dossier : ",p_dossier)
+      console.log("p_parentId : ",p_parentId)
+
+      // Créer 1 nouveau dossier dans la table 'Dossier'
+      // 
+
+      // Par exemple : fetcherChain([fetcher(url2), fetcher(url3) , fetcher(url4)], afficheLesDatas,"div4result2")
+
+      var urlAjouter = "/addDossier?"+"dossier="+p_dossier+"&parentIdDossier="+p_parentId
+
+      var record = ajouterDossier(p_dossier, p_parentId) 
+      console.log("Après enregistrement du nouveau dossier ceci est retourné : ",record)
+
+      console.log("Présentation du nouveau record")
+      console.log("record['data']['id'] : ",record['data']['id'])
+      console.log("record['data']['dossier'] : ",record['data']['dossier'])
+
+      var dos = record['data']['id']
+      var idnew = record['data']['id']
+
+      // Màj du <select> 'Dossier' 
+      // 1) Supprimer toutes les <option>
+      selectDossier.clearOptions()
+      
+      // Rechercher dans la table 'dossier' toutes les lignes avec (parent_id = p_event.target.value)
+      // 2) Créer les nouveaux <option>
+      selectDossier.datasForOptions("/dossierWithParentIdAjouter?langage="+p_parentId, "dossier")
+
+      // Autoriser ce <select>
+      selectDossier.enableIt()
+
+      // Placer le <select> sur le nouveau <option> fraichement crée
+      selectDossier.setOption(idnew)
+
+
+      // var v = selectDossier.returnValueFromOption(p_dossier)
+      // console.log("Quelle le texte recherché : ",p_dossier)
+      // console.log("Quelle est la réponse : ", v)
+      // selectDossier.setOption(v)
+
+      
+    }
+}
+
+function eventManagerBtnAjouter_AjoutSousDossier(p_event){
+  if(p_event.target.id == "btnAjouter_AjoutSousDossier"){
+    var a = 100;
+      console.log("Click sur btn btnAjouter_AjoutSousDossier")  
+      modalAjouterSousDossier.hide()
+      var p_sousdossier = document.getElementById("modalAjouterSousDossier_input").value.trim()
+      document.getElementById("modalAjouterSousDossier_input").value = ""
+      var p_parentId = selectDossier.value
+
+      // Ajouter le 'sousdossier' à sa table
+      ajouterSousDossier(p_sousdossier, p_parentId)
+
+      var url = "/sousdossierWithParentIdAjouter?dossier="+p_parentId
+      console.log("URL : ",url)
+      console.log("p_sousdossier : ",p_sousdossier)
+      console.log("p_parentId : ",p_parentId)
+      
+      selectSousdossier.clearOptions()
+      selectSousdossier.datasForOptions(url, "sousdossier")
+      selectSousdossier.enableIt()
+      // Rechercher quel <option> pour selectDossier.options.value = p_sousdossier
+      // selectSousdossier.setOption()
+
+      // Placer le <select> sur le nouveau <option> fraichement crée
+    }
+}
+
+
+
+function eventManagerBtnAnnuler_AjoutDossier(p_event){
+  modalAjouterDossier.hide()
+  selectDossier.setOption(0)
+  selectDossier.addToClass("text-danger")
+}
+
+
+function eventManagerBtnAnnuler_AjoutSousDossier(p_event){
+  modalAjouterSousDossier.hide()
+  selectSousdossier.setOption(0)
+  // selectSousdossier.addToClass("text-danger")
+}
+
+function eventManagerWindow(p_event){
+  if(p_event.type == 'load'){
+    console.log("window.onload : ", p_event)
+    console.log("event.type : ", p_event.type)
+    console.log("p_event.type == 'load'",p_event.type == 'load')
+    createStartSelects();
+  }
+  if(p_event.type == 'beforeunload'){
+    console.log("BEFOREUNLOAD event in window")
+    console.log("beforeunload event : ",p_event)  
+    console.log("p_event.type : ",p_event.type)
+    document.getElementById("p4message").innerHTML = "in window.beforeonload"
+    p_event.preventDefault();
+    
+    // var confirmationMessage = "\\o/";
+    // e.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
+    // return confirmationMessage; // Gecko, WebKit, Chrome <34
+  }
+}
+
+
+selectLangage.addEventListener('change',eventManagerChangeOnSelect,false)
+selectDossier.addEventListener('change',eventManagerChangeOnSelect,false)
+selectSousdossier.addEventListener('change',eventManagerChangeOnSelect,false)
+
+var btnEnregistrer = document.getElementById("btnEnregistrer")
+btnEnregistrer.addEventListener('click',eventManagerSave,false)
+
+var titre = document.getElementById("titre")
+titre.addEventListener('input',eventManagerTitre,false)
+
+var btnAnnuler = document.getElementById("btnAnnuler")
+btnAnnuler.addEventListener('click',eventManagerBtnAnnuler,false)
+
+
+var btnAjouter_AjoutDossier = document.getElementById("btnAjouter_AjoutDossier")
+btnAjouter_AjoutDossier.addEventListener('click',eventManagerBtnAjouter_AjoutDossier,false)
+
+
+var btnAjouter_AjoutSousDossier = document.getElementById("btnAjouter_AjoutSousDossier")
+btnAjouter_AjoutSousDossier.addEventListener('click',eventManagerBtnAjouter_AjoutSousDossier,false)
+
+
+var btnAnnuler_AjoutDossier = document.getElementById("btnAnnuler_AjoutDossier")
+btnAnnuler_AjoutDossier.addEventListener('click',eventManagerBtnAnnuler_AjoutDossier,false)
+
+
+var btnAnnuler_AjoutSousDossier = document.getElementById("btnAnnuler_AjoutSousDossier")
+btnAnnuler_AjoutSousDossier.addEventListener('click',eventManagerBtnAnnuler_AjoutSousDossier,false)
+
+window.addEventListener('load',eventManagerWindow, false)
+window.addEventListener('beforeunload',eventManagerWindow, false)
+
+// window.addEventListener("beforeunload", function (p_event) {
+//   if (p_event.type == "beforeunload"){
+//     console.log("beforeunload event : ",p_event)  
+//     console.log("p_event.type : ",p_event.type)
+//   }
+//   p_event.preventDefault();
+
+  
+//   // var confirmationMessage = "\\o/";
+//   // console.log("beforeunload event : ",p_event)
+//   // p_event.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
+//   // return confirmationMessage; // Gecko, WebKit, Chrome <34
+// });
+
+
+
+// window.onload = function WindowLoad(event) {
+//   console.log("window.onload : ", event)
+//   console.log("event.type : ", event.type)
+//   console.log("event.type == 'load'",event.type == 'load')
+//     createStartSelects();
+// }
+
+var editor = tinymce.get("tinymceEditor");
+
+var modalAjouterDossier = new bootstrap.Modal(document.getElementById("modalAjouterDossier"), {});
+
+var modalAjouterSousDossier = new bootstrap.Modal(document.getElementById("modalAjouterSousDossier"), {});
+
+var o0 = document.createElement('option')
+o0.text = 'optionNew'
+o0.value = 998
+
+</script>
+
+
+{% endblock scripts %}
+
+
+

@@ -1,0 +1,334 @@
+{% extends "MyBase.html" %}
+
+{% block title %}SELECT Classe{% endblock title %}
+
+
+{% block content %}
+
+
+   <div class="container" id="divSelect0">
+    
+      <select id = "selectLangage"></select>
+      <select id = "selectDossier"></select>
+      <select id = "selectSousdossier"></select>  
+    
+    <button class="btn btn-primary" id="btnCreer" >Créer</button>      
+   </div>
+
+
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" language="javascript">
+  var divSelect0 = document.getElementById('divSelect0')
+
+  var selectLangage = document.getElementById('selectLangage')
+
+  HTMLSelectElement.prototype.addToClass = function(p_string){
+    this.classList.add(p_string)
+  }
+  HTMLSelectElement.prototype.removeFromClass = function(p_string){
+    this.classList.remove(p_string)
+  }
+  HTMLSelectElement.prototype.replaceFromClass = function(p_stringToReplace, p_string){
+    this.classList.replace(p_stringToReplace, p_string)
+  }
+  HTMLSelectElement.prototype.toggleFromClass = function(p_string){
+    this.classList.toggle(p_string)
+  }
+  HTMLSelectElement.prototype.clearOptions = function(){
+    while(this.firstChild){
+      this.removeChild(this.firstChild)
+    }
+  }
+  HTMLSelectElement.prototype.readOption = function(){
+    var arr = []
+    var id = this.id
+    var value = this.value
+    var text = this.selectedOptions[0].text
+    var d = {'id':id,'value':value,'texte':text}
+    arr.push(d)
+    return arr
+  }
+  HTMLSelectElement.prototype.buildOptionsFromUrl = function(p_url){
+    // Fetch 'get' vers 'p_url'
+    if(p_url == 'langage'){
+      return [{'text':'Langages','value':0},{'text':'Python','value':1},{'text':'Javascript','value':2}]
+    }
+    if(p_url == 'dossier'){
+      return [{'text':'Dossiers','value':0},{'text':'Option 1','value':1},{'text':'Option 2','value':2}]
+    }
+    if(p_url == 'sousdossier'){
+      return [{'text':'Sous-dossiers','value':0},{'text':'Option 1','value':1},{'text':'Option 2','value':2}]
+    }
+    if(p_url == 'claire'){
+      return [{'text':'Claire','value':0},{'text':'Doriath','value':1},{'text':'Blue','value':2},{'text':'Nina','value':3},{'text':'Boumi','value':4}]
+    }
+  }
+  HTMLSelectElement.prototype.buildAllOptions = function(p_optionList){
+    this.clearOptions()
+    for (var i = 0; i < p_optionList.length; i++) {
+      var o = document.createElement('option')
+      o.innerHTML = p_optionList[i].text
+      o.value = p_optionList[i].value
+      // console.log('HTMLSelectElement.prototype.buildAllOptions')
+      this.appendChild(o);
+    }
+  }
+  HTMLSelectElement.prototype.resetOption = function(){
+    this.value=0
+  }
+  HTMLSelectElement.prototype.setOption = function(p_value){
+    this.value=p_value
+  }
+
+  HTMLSelectElement.prototype.addOption = function(p_text, p_value){
+    // Ajouter à la fin des 'options' une balise 'option'
+    var o = document.createElement('option')
+    o.text = p_text
+    o.value = p_value
+    this.appendChild(o);
+  }
+  HTMLSelectElement.prototype.enableIt = function(){
+    this.disabled = false;
+  }
+  HTMLSelectElement.prototype.disableIt = function(){
+    this.disabled = true;
+  }
+
+
+  function eventManagerChangeOnSelect(p_event){
+    if(p_event.target.id == 'selectLangage'){
+      console.log("CHANGE event on langage")
+      console.log("p_event.target.value : ",p_event.target.value)
+      selectSousdossier.disableIt()
+      if(p_event.target.value == 0){
+        selectDossier.disableIt()
+        selectDossier.resetOption()
+        selectSousdossier.disableIt()
+        selectSousdossier.resetOption()
+      }
+      else{
+        // selectLangage.addToClass("bg-primary")
+        selectDossier.enableIt()
+        if(p_event.target.value == 1){
+          selectDossier.buildAllOptions(dataDossier1)
+        }
+        if(p_event.target.value == 2){
+          selectDossier.buildAllOptions(dataDossier2)
+        }
+      }
+      // Màj de <table> avec : 
+      // Récupération des datas : rechercheCodeHtml(p_langage, p_dossier="", p_sousdossier="")
+      // Affichage des datas : 
+    }
+    if(p_event.target.id == 'selectDossier'){
+      console.log("CHANGE event on dossier")
+      console.log("p_event.target.value : ",p_event.target.value)
+      if(p_event.target.value == 0){
+        selectSousdossier.disableIt()
+        selectSousdossier.resetOption()
+      }
+      else{
+        selectSousdossier.enableIt()
+        // dossier.
+        if(p_event.target.value == 11){
+          selectSousdossier.buildAllOptions(dataSousdossier11)
+        }
+        if(p_event.target.value == 12){
+          selectSousdossier.buildAllOptions(dataSousdossier12)
+        }
+        if(p_event.target.value == 13){
+          selectSousdossier.buildAllOptions(dataSousdossier13)
+        }
+        if(p_event.target.value == 21){
+          selectSousdossier.buildAllOptions(dataSousdossier21)
+        }
+        if(p_event.target.value == 22){
+          selectSousdossier.buildAllOptions(dataSousdossier22)
+        }
+        if(p_event.target.value == 23){
+          selectSousdossier.buildAllOptions(dataSousdossier23)
+        }
+      }
+
+    }
+    if(p_event.target.id == 'selectSousdossier'){
+      console.log("CHANGE event on sous-dossier")
+      console.log("p_event.target.value : ",p_event.target.value)
+    }
+
+    // Demander les datas au serveur avec 
+    var l = selectLangage.readOption()
+    var d = selectDossier.readOption()
+    var sd = selectSousdossier.readOption()
+    console.log("Voici langage : ",l)
+    console.log("Voici dossier : ",d)
+    console.log("Voici sous-dossier : ",sd)
+
+  }
+
+
+  function eventManager(p_event){
+    var breakPoint = 222;
+
+    if(p_event.target.id == 'btnCreer'){
+      console.log("Click sur btn créer")  
+    }
+  }
+
+
+function createMySelects(){
+  selectLangage.buildAllOptions( selectLangage.buildOptionsFromUrl('langage') ) 
+  selectDossier.buildAllOptions( selectDossier.buildOptionsFromUrl('dossier') )
+  selectDossier.disableIt()
+  selectSousdossier.buildAllOptions( selectSousdossier.buildOptionsFromUrl('sousdossier') )
+  selectSousdossier.disableIt()
+}
+
+
+selectLangage.addEventListener('change',eventManagerChangeOnSelect,false)
+selectDossier.addEventListener('change',eventManagerChangeOnSelect,false)
+selectSousdossier.addEventListener('change',eventManagerChangeOnSelect,false)
+btnCreer.addEventListener('click',eventManager,false)
+//document.addEventListener('DOMContentLoaded',createMySelects,false)
+
+
+async function optionSelectLangage(){
+  // Si les 'select' dossier et sousdossier sont vides alors on appelle ainsi : 
+  // rechercheCodeHtml(1)
+  // Si le 'select' sousdossier est vide alors on appelle ainsi : 
+  // rechercheCodeHtml(1,1)
+  var maListe = []
+  // var url = "https://jsonplaceholder.typicode.com/posts/"+p_id
+  var url = "/langageAll"
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  console.log("jsonData : ",jsonData)
+  // var el = document.getElementById("voiciPage")
+  // el.innerHTML = jsonData
+};
+
+
+
+
+
+async function rechercheCodeHtml(p_langage, p_dossier="", p_sousdossier=""){
+  // Si les 'select' dossier et sousdossier sont vides alors on appelle ainsi : 
+  // rechercheCodeHtml(1)
+  // Si le 'select' sousdossier est vide alors on appelle ainsi : 
+  // rechercheCodeHtml(1,1)
+  var maListe = []
+  // var url = "https://jsonplaceholder.typicode.com/posts/"+p_id
+  var url = "/getNotreCodePapa?"+"langage="+p_langage+"&dossier="+p_dossier+"&sousdossier="+p_sousdossier
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  console.log("jsonData : ",jsonData)
+  // var el = document.getElementById("voiciPage")
+  // el.innerHTML = jsonData
+};
+
+window.onload = function WindowLoad(event) {
+    createMySelects();
+}
+
+// TABLE 
+// ============================ les DATA pour la classe 'classTable2020'
+
+// var myHeadersOrder0 = [ // 7 entêtes de colonne
+// 'theadKey0','theadKey1','theadKey2','theadKey3','theadKey4','theadKey5',
+// 'theadKey6']; 
+
+var myHeadersOrder0 = [ // 7 entêtes de colonne
+'theadKey0','theadKey1Inc',"theadKeyColspan6"]; 
+
+var myHeaders0 = [ // 2 lignes d'entête sur 7 colonnes à afficher
+// 1 ère ligne d'entête : 
+{theadKey0:"Voici notre beau code :)"},// colspan sur TOUTES les colonnes
+// 2 em ligne d'entête : 
+// {theadKey0:"Accepté ? ",theadKey1:"Le nom",theadKey2:'Le prénom',theadKey3:"Le téléphone",
+// theadKey5:"Le prix",theadKey4:"Le code",theadKey6:'Les boutons'}
+// ];
+{theadKey1Inc:"Date",theadKeyColspan6:'Titre'}
+];
+
+var myBodysOrder0 = [// 8 clés de data
+// 'dataTag_flag','nom','prenom','tel','code','prix','dataTag_btnOpen','dataTag_btnDel'];
+// 'date999','dataKey_colspan6','dataTag_btnOpen'];
+  'dataKey_col_1','titre_colspan_4','dataTag_btnOpen'];
+
+var myBodys0 =[ // 3 lignes de 8 colonnes 
+// ('id' n'est PAS affiché) donc 7 colonnes sont à afficher
+{'dataKey_col_1': '10/05/2023','titre_colspan_4':'le string',id:0,nom:'dor',prenom:'chr',tel:123,prix:10,code:2,dataTag_btnOpen:'Ouvrir',dataTag_btnDel:'Supprimer',dataTag_flag:1},
+{'dataKey_col_1': '10/05/2023','titre_colspan_4':'le string',id:1,nom:'kin',prenom:'elise',tel:456,prix:14,code:0,dataTag_btnOpen:'Ouvrir',dataTag_btnDel:'Supprimer',dataTag_flag:0},
+{'dataKey_col_1': '10/05/2023','titre_colspan_4':'le string',id:2,nom:'lep',prenom:'oliv',tel:789,prix:16,code:3,dataTag_btnOpen:'Ouvrir',dataTag_btnDel:'Supprimer',dataTag_flag:1}];
+
+var myFootsOrder0 = [ // 2 clés de colonne pour 'footer'
+'foot0']
+
+var myFoots0 = [ // 3 lignes de 2 colonnes à afficher
+{foot0:"Lestortues67 - 05/2023"}
+];
+// ============================ les DATA == FIN 
+
+
+var c = new classHtmlElementsReservoir();
+
+// 2) Création d'une instance de la classe « classTable2020 »
+var t = new classTable2020(c);
+
+// 3) Création AUTOMATIQUE ( dans la 1ère div libre) d'une balise 'table' avec ses 3 enfants : 
+// thead,tbody,tfoot 
+t.createTableAutoSearch( );
+
+
+// 4) La balise <table> existe déjà mais ses éléments (thead,tbody,tfoot) sont vides
+
+// 4.1) remplacement du thead existant par un nouveau à partir des listes fournies en p_
+t.updateThead (myHeadersOrder0,myHeaders0,p_structKeys={},p_dataKeys={});
+//myHeadersOrder0 : ordre d'affiche des datas dans myHeaders0
+// myHeaders0 : les valeurs a afficher
+// p_structKeys={} les clés de structure
+// p_dataKeys={} les clés de data
+
+// 4.2) remplacement du tbody existant par un nouveau à partir des listes fournies en p_
+t.updateTbody (myBodysOrder0,myBodys0,{'tr':'trBan'},{'prenom':'upperText','tel':'italicText','code':'infoText'}) 
+// {'tr':'trBan'} une clé de structure est fournie pour 'tr' 
+// Cela indique que la balise <tr> est modifié selon 'trBan' : le BG est jaune. 
+
+// {'prenom':'upperText','tel':'italicText','code':'infoText'} des clés de data sont fournies
+// la colonne 'prenom':'upperText' les caractères seront en majuscule
+// la colonne 'tel':'italicText' les caractères seront en italique
+// la colonne 'code':'infoText' les caractères seront en couleur 'info' (bootstrap)
+
+
+// 4.3) remplacement du tfoot existant par un nouveau à partir des listes fournies en p_
+t.updateTfoot (myFootsOrder0,myFoots0,{},{})
+
+// 5) Afficher la balise <table>
+t.send2ScreenTable();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+{% endblock scripts %}
