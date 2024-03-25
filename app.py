@@ -67,6 +67,14 @@ def my_git_update():
     print("Infos sur re-load :", resultat.stdout)    
     return 'ok', 200
 
+
+@app.route('/papa01', methods=['GET'])
+def my_papa01():
+    return render_template('papa01.html')
+
+
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
