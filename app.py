@@ -10,6 +10,10 @@ Description : Divers tests avec ajax, inspiration video youtube
 Mot cles : ajax 
 """
 
+
+import subprocess
+import gitLibrary
+
 from datetime import datetime, date
 from werkzeug.local import Local, LocalManager
 from flask import Flask, render_template, jsonify, request
