@@ -18,6 +18,9 @@ import pdb
 import uuid
 app = Flask(__name__)
 
+
+#Bonjour lundi 
+
 @app.route('/')
 def index():
     return render_template('index.html')
