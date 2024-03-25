@@ -26,7 +26,7 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["DEBUG"] = True
 
 
-#Bonjour lundi  
+#Bonjour lundi il est midi
 
 @app.route('/')
 def index():
