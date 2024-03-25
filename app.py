@@ -18,6 +18,8 @@ import pdb
 import uuid
 app = Flask(__name__)
 
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+
 
 #Bonjour lundi  
 
