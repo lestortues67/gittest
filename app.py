@@ -23,7 +23,7 @@ import uuid
 app = Flask(__name__)
 
 
-#Bonjour lundi  
+#Bonjour lundi il est midi
 
 @app.route('/')
 def index():
