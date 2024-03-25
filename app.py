@@ -2,7 +2,7 @@
 Source : 
 Date : 2/06/2019
 Auteur : Christian Doriath
-Dossier : /Python34/MesDEv/Flask/ajax_BASE
+Dossier : 
 Fichier : app.py
 Description : Divers tests avec ajax, inspiration video youtube  
 "Apprendre le JavaScript : Chapitre 17, Ajax"
