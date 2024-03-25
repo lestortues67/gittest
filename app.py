@@ -68,7 +68,7 @@ def my_git_update():
 
     # Affichage du résultat
     print("Infos sur re-load :", resultat.stdout)    
-    return 'ok', 200
+    return 'ok', 200 
 
 
 @app.route('/papa01', methods=['GET'])
