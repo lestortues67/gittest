@@ -24,12 +24,12 @@
 
     <body{% block body_attribs %}{% endblock body_attribs %}>
     {% block body -%}
-        {% include '/pagesBases/TopOfNavBar.html' %} 
+        {% include 'TopOfNavBar.html' %} 
         {% include 'NavigationBar.html' %}
             {% block content -%}
             <!-- Tout le contenu VARIABLE des pages sera placé ici par les pages qui étendent (extends) ce fiche comme base -->
             {%- endblock content %}
-        {% include '/pagesBases/Footer.html' %}
+        {% include 'Footer.html' %}
         {% block scripts %}
             <!-- Optional JavaScript -->
             <!-- jQuery first, then Popper.js, then Bootstrap JS -->
