@@ -1,0 +1,139 @@
+{% extends "/pagesBases/MyBase.html" %}
+
+{% block title %}Tester AJAX{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+
+	<div class="alert alert-warning" role="alert">
+  Ce projet présente JSON avec les requêtes HTTP GET et POST effectuées à l'aide d'AJAX. 
+	</div>
+
+
+	<p>Le serveur attend indéfiniment une requête d'un client pour y répondre. </p>
+	<p>Le client envoie une requête de type GET (sans data) ou POST (avec data) vers le serveur.</p>
+
+<table class="table" id="tablejsonHTTP">
+  <thead>
+    <tr>
+      <th scope="col">Requête</th>
+      <th scope="col">Note</th>
+      <th scope="col">Serveur</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">GET</th>
+      <td>La requête ne contient PAS de data</td>
+      <td>Il se base UNIQUEMENT sur l'URL pour définir quelle data est retournée au client.</td>
+    </tr>
+    <tr>
+      <th scope="row">POST</th>
+      <td>La requête CONTIENT de la data</td>
+      <td>Il peut se baser sur l'URL OU sur la data contenue dans la requête pour définir quelle data est retournée au client.</td>
+    </tr>
+  </tbody>
+</table>	
+
+
+
+<table class="table" id="tablejsonplaceholder">
+	<thead>
+		<tr>
+			<th scope="col" style="width:200px" ><center>https://jsonplaceholder.typicode.com/ (Fake Online REST API for Testing and Prototyping )</center></th>
+		</tr>
+	</thead>
+	<thead>
+		<tr>
+			<th scope="col" style="width:200px">requête GET</th>
+      		<th scope="col" style="width:200px">requête POST</th>
+    	</tr>
+  	</thead>
+  	<tbody>
+  		<tr style="width:200px">
+  			<td><p>requête GET vers le serveur jsonplaceholder : AJAX_jsonplaceholderGET.html et AJAX_jsonplaceholderGET.js</p></td><td>requête POST vers le serveur jsonplaceholder : AJAX_jsonplaceholderPOST.html et AJAX_jsonplaceholderPOST.js</td>
+  		</tr>
+  		<tr style="width:200px">
+  			<td><li>demande de réponse au format JSON à cette route  : /ResponseJSON_jsonplaceholderGET</li></td><td><li>demande de réponse au format JSON à cette route : /ResponseJSON_jsonplaceholderPOST </li> </td>
+  		</tr>
+  		
+  	</tbody>
+</table>
+
+
+<table class="table" id="tableFlasklocalhost">
+	<thead>
+		<tr>
+			<th scope="col" style="width:200px" ><center>Flask en localhost</center></th>
+		</tr>
+	</thead>
+	<thead>
+		<tr>
+			<th scope="col" style="width:200px">requête GET</th>
+      		<th scope="col" style="width:200px">requête POST</th>
+    	</tr>
+  	</thead>
+  	<tbody>
+  		<tr style="width:200px">
+  			<td><p>requête GET vers le serveur Flask en localhost : AJAX_GETFlask.html</p></td><td>requête POST vers le serveur Flask en localhost : AJAX_POSTFlask.html</td>
+  		</tr>
+  		<tr style="width:200px">
+  			<td><li>demande de réponse au format JSON à cette route : /ResponseJSON_AJAX_GETFlask</li></td><td><li>demande de réponse au format JSON à cette route : /ResponseJSON_AJAX_POSTFlask</li> </td>
+  		</tr>
+  	</tbody>
+</table>
+
+<table class="table" id="tableFlaskPAW">
+	<thead>
+		<tr>
+			<th scope="col" style="width:200px" ><center>Flask sur PAW</center></th>
+		</tr>
+	</thead>
+	<thead>
+		<tr>
+			<th scope="col" style="width:200px">requête GET</th>
+      		<th scope="col" style="width:200px">requête POST</th>
+    	</tr>
+  	</thead>
+  	<tbody>
+  		<tr style="width:200px">
+  			<td><p>requête GET vers le serveur PAW : AJAX_GETPAW.html</p></td><td>requête POST vers le serveur PAW : AJAX_POSTPAW.html</td>
+  		</tr>
+  		<tr style="width:200px">
+  			<td><li>demande de réponse au format JSON à cette route : /ResponseJSON_AJAX_GETPAW</li></td><td><li>demande de réponse au format JSON à cette route : /ResponseJSON_AJAX_POSTPAW</li> </td>
+  		</tr>
+  		
+  	</tbody>
+</table>
+
+
+
+<p><h4> Utiliser la barre de navigation pour voir les tests possibles</h4></p>
+
+<p> Utilisation d'un site dédié au JSON : </p>
+<ul>
+	<li>https://jsonplaceholder.typicode.com/posts</li>
+	<li>https://jsonplaceholder.typicode.com/users</li>
+	<li>Source : https://developer.mozilla.org/fr/docs/Web/Guide/AJAX/Premiers_pas</li>
+
+
+<p></p>
+
+
+</ul>
+</div>
+{% endblock content %}
+
+
+{% block scripts %}
+{{super()}}
+  <script type="application/javascript" src="/static/app.js"></script>
+
+{% endblock %}
+
+
+
+
+
+
