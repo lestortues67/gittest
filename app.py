@@ -1,6 +1,6 @@
 """
 Source : 
-Date : 2/06/2019
+Date : 25/03/2024
 Auteur : Christian Doriath
 Dossier : 
 Fichier : app.py
@@ -73,6 +73,7 @@ def my_git_update():
 
 @app.route('/papa01', methods=['GET'])
 def my_papa01():
+    #la fonction papa01()
     return render_template('papa01.html')
 
 
